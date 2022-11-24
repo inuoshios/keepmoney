@@ -19,7 +19,6 @@ export interface UserRegister {
 }
 
 export interface UserLogin {
-    _id: string;
     email: string;
     password: string;
 }

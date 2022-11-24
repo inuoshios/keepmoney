@@ -25,9 +25,9 @@ export const loginUser = async (body: DocumentDefinition<UserLogin>) => {
         throw new Error('password does not match')
     }
 
-    const accessToken = generateToken({ id: body._id, email: body.email }, { expiresIn: config.accessTokenExpiry });
+    const accessToken = generateToken({ id: user._id, email: body.email }, { expiresIn: config.accessTokenExpiry });
 
-    const refreshToken = generateToken({ id: body._id, email: body.email }, { expiresIn: config.refreshTokenExpiry });
+    const refreshToken = generateToken({ id: user._id, email: body.email }, { expiresIn: config.refreshTokenExpiry });
 
     return { user, accessToken, refreshToken };
 };

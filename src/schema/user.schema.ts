@@ -37,4 +37,18 @@ export const createUserSchema = z.object({
     })
 });
 
-export type CreateUserInput = z.TypeOf<typeof createUserSchema>
+export const createLoginSchema = z.object({
+    body: z.object({
+        email: z.string({
+            required_error: "email cannot be empty"
+        }),
+
+        password: z.string({
+            required_error: "password cannot be empty"
+        })
+    }),
+});
+
+export type CreateLoginInput = z.TypeOf<typeof createLoginSchema>;
+
+export type CreateUserInput = z.TypeOf<typeof createUserSchema>;

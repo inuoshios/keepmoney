@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { createUser, loginUser } from '../services/user.service';
 import { StatusCodes } from 'http-status-codes';
 import { validate } from '../middleware/validateResource';
-import { CreateUserInput, createUserSchema } from '../schema/user.schema';
+import { CreateLoginInput, createLoginSchema, CreateUserInput, createUserSchema } from '../schema/user.schema';
 
 const router = express.Router();
 
@@ -13,8 +13,8 @@ router.post('/signup', validate(createUserSchema),
     }
 );
 
-router.post('/signin',
-    async (req: Request, res: Response) => {
+router.post('/signin', validate(createLoginSchema),
+    async (req: Request<{}, {}, CreateLoginInput['body']>, res: Response) => {
         const data = await loginUser(req.body);
         res.status(StatusCodes.OK).json({
             user: data.user,
