@@ -15,7 +15,7 @@ export interface UserRegister {
     email: string;
     password: string;
     phoneNumber?: string;
-    socialLinks?: string;
+    socialLinks?: string[];
 }
 
 export interface UserLogin {

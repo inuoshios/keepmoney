@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { createUser, loginUser } from '../services/user.service';
+import { createUser, loginUser } from '../services/user.services';
 import { StatusCodes } from 'http-status-codes';
 import { validate } from '../middleware/validateResource';
 import { CreateLoginInput, createLoginSchema, CreateUserInput, createUserSchema } from '../schema/user.schema';
