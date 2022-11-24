@@ -2,22 +2,17 @@ import mongoose, { Document } from "mongoose";
 import bcrypt from 'bcrypt';
 import config from '../config'
 import { IUser } from '../interface/user'
-import { string } from "zod";
 
 const userSchema = new mongoose.Schema(
     {
         firstName: {
             type: String,
             required: true,
-            minlength: 2,
-            maxlength: 100,
             trim: true
         },
         lastName: {
             type: String,
             required: true,
-            minlength: 2,
-            maxlength: 100,
             trim: true
         },
         email: {
@@ -42,11 +37,21 @@ const userSchema = new mongoose.Schema(
     }
 );
 
+// mongoose hooks - executes on save
 userSchema.pre<IUser>('save', async function () {
     const salt = await bcrypt.genSalt(config.salt);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
+// omit the password from the api
+userSchema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+});
+
+// compare user password with the hashed password
 userSchema.methods.comparePassword = async function (password: string): Promise<boolean | undefined> {
     const user = this as IUser;
 
