@@ -10,4 +10,10 @@ export default {
     salt: 10,
 
     mongoUri: process.env.MONGO_URI!,
+
+    jwtSecret: process.env.JWT_SECRET!,
+
+    accessTokenExpiry: process.env.ACCESS_TOKEN_EXPIRES_AT!,
+
+    refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRES_AT!,
 }
