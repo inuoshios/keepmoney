@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const createBudgetSchema = z.object({
     body: z.object({
+        description: z.string().optional(),
         amount: z.number({
             required_error: "amount cannot be empty"
         }),
@@ -20,6 +21,8 @@ export const createBudgetSchema = z.object({
             "November",
             "December"
         ]),
+
+        userId: z.string().optional()
 
     })
 });
