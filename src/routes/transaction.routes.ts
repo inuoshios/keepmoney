@@ -2,14 +2,16 @@ import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
+import { validate } from '../middleware/validateResource';
+import { CreateTransactionInput, createTransactionSchema } from '../schema/transaction.schema';
 import { findSingleBudget } from '../services/budget.services';
 import { createTransaction } from '../services/transaction.services';
 
 const router = express.Router();
 
-router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser,
-    async (req: Request, res: Response) => {
-        const userId = res.locals.user.id
+// this code looks bloated -> refractoring
+router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser, validate(createTransactionSchema),
+    async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
         const { budgetId } = req.params;
 
         const budget = await findSingleBudget({ budgetId });
