@@ -37,6 +37,13 @@ export const createUserSchema = z.object({
     })
 });
 
+/**
+ * createLoginSchema
+ * {
+ *      "email": "email@email.com",
+ *      "password": "password"
+ * }
+ */
 export const createLoginSchema = z.object({
     body: z.object({
         email: z.string({
