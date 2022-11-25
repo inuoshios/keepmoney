@@ -32,7 +32,11 @@ const budgetSchema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'User',
             required: true
-        }
+        },
+        transactions: [{
+            type: mongoose.Types.ObjectId,
+            ref: 'Transaction'
+        }]
     },
     {
         timestamps: true

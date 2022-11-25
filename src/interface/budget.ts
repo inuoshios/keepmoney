@@ -16,9 +16,11 @@ export interface IBudget {
     | "November"
     | "December";
     userId: string;
+    transactions: object;
 }
 
 export interface CreateBudget {
+    _id: string;
     description?: string;
     amount: number;
     month:
@@ -34,4 +36,5 @@ export interface CreateBudget {
     | "October"
     | "November"
     | "December";
+    transactions?: string[];
 }

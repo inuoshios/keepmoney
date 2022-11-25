@@ -17,7 +17,6 @@ router.post('/signin', validate(createLoginSchema),
     async (req: Request<{}, {}, CreateLoginInput['body']>, res: Response) => {
         const data = await loginUser(req.body);
         res.status(StatusCodes.OK).json({
-            user: data.user,
             accessToken: data.accessToken,
             refreshToken: data.refreshToken
         });
