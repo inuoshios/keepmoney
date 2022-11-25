@@ -2,7 +2,7 @@ import { DocumentDefinition, FilterQuery } from "mongoose";
 import { CreateBudget } from "../interface/budget";
 import { BudgetModel } from "../models/budget.models";
 
-export const createBudget = async (data: DocumentDefinition<CreateBudget>) => {
+export const createBudget = async (data: DocumentDefinition<Omit<CreateBudget, "transactions" | "_id">>) => {
     try {
         return BudgetModel.create(data);
     } catch (e) {

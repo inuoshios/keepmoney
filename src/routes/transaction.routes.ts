@@ -12,9 +12,7 @@ router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser,
         const userId = res.locals.user.id
         const { budgetId } = req.params;
 
-        const body = req.body;
-
-        const budget = await findSingleBudget({ _id: budgetId, userId });
+        const budget = await findSingleBudget({ budgetId });
         if (!budget) {
             throw new Error("budget not found");
         }
@@ -22,7 +20,9 @@ router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser,
             res.status(StatusCodes.BAD_REQUEST).json({ msg: "budget does not exist" });
         }
 
-        const transaction = await createTransaction({ ...body, budget });
+        req.body.owner = budget._id;
+
+        const transaction = await createTransaction({ ...req.body });
 
         switch (transaction.type) {
             case "Expenses":

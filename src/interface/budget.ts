@@ -36,5 +36,5 @@ export interface CreateBudget {
     | "October"
     | "November"
     | "December";
-    transactions?: string[];
+    transactions?: object;
 }
