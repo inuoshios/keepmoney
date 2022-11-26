@@ -14,6 +14,6 @@ export const getAllBudget = async (query: FilterQuery<CreateBudget>) => {
     return BudgetModel.find(query).populate('transactions');
 };
 
-export const updateBudget = async () => {
+export const updateBudget = async (data: DocumentDefinition<CreateBudget>) => {
 
 };
