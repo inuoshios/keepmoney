@@ -5,37 +5,73 @@ import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
 import { CreateTransactionInput, createTransactionSchema } from '../schema/transaction.schema';
 import { findSingleBudget } from '../services/budget.services';
-import { createTransaction } from '../services/transaction.services';
+import { createTransaction, getTransactions } from '../services/transaction.services';
 
 const router = express.Router();
 
-router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser, validate(createTransactionSchema),
-    async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
-        const { budgetId } = req.params;
-        const owner = res.locals.user
+router.route("/budget/:budgetId/transactions")
+    .post(authenticateRequest, requireUser, validate(createTransactionSchema),
+        async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
+            const { budgetId } = req.params;
+            const owner = res.locals.user.id;
 
-        const budget = await findSingleBudget({ _id: budgetId, userId: owner });
-        if (!budget) {
-            throw new Error("budget not found");
+            const budget = await findSingleBudget({ budgetId });
+            if (!budget) {
+                throw new Error("budget not found");
+            }
+
+            if (String(budget.userId) !== owner) {
+                throw new Error('unauthenticated');
+            }
+
+            req.body.owner = budget._id;
+
+            const transaction = await createTransaction({ ...req.body });
+
+            if (transaction.type === "Credit") {
+                budget.amount = Number(budget.amount) + Number(transaction.amount);
+            } else if (transaction.type === "Expenses") {
+                budget.amount = Number(budget.amount) - Number(transaction.amount);
+            }
+
+            budget.transactions.push(transaction);
+
+            budget.save();
+
+            res.status(StatusCodes.OK).json({ msg: "success", data: transaction });
         }
+    ).
+    get(authenticateRequest, requireUser,
+        async (req: Request, res: Response) => {
+            const { budgetId } = req.params;
+            const user = res.locals.user.id;
 
-        req.body.owner = budget._id;
+            const budget = await findSingleBudget({ budgetId });
+            if (!budget) {
+                throw new Error("budget not found");
+            }
 
-        const transaction = await createTransaction({ ...req.body });
+            if (String(budget.userId) !== user) {
+                throw new Error('unauthenticated');
+            }
 
-        if (transaction.type === "Credit") {
-            budget.amount = Number(budget.amount) + Number(transaction.amount);
-        } else if (transaction.type === "Expenses") {
-            budget.amount = Number(budget.amount) - Number(transaction.amount);
+            const transaction = await getTransactions({ owner: budget._id })
+
+            res.status(StatusCodes.OK).json({ msg: "success", transaction })
         }
+    );
 
-        budget.transactions.push(transaction);
+router.route("/budget/:budgetId/transactions/:transactionId")
+    .get(authenticateRequest, requireUser,
+        async => { }
+    )
+    .patch(authenticateRequest, requireUser,
+        async => { }
+    )
+    .delete(authenticateRequest, requireUser,
+        async => { }
+    )
 
-        budget.save();
-
-        res.status(StatusCodes.OK).json({ msg: "success", data: transaction });
-    }
-);
 
 export {
     router as transactionRouter

@@ -4,7 +4,7 @@ import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
 import { createBudgetInput, createBudgetSchema } from '../schema/budget.schema';
-import { createBudget, findSingleBudget, getAllBudget } from '../services/budget.services';
+import { createBudget, deleteBudget, findSingleBudget, getAllBudget, updateBudget } from '../services/budget.services';
 
 const router = express.Router();
 
@@ -30,21 +30,59 @@ router.route("/budget/:budgetId")
         async (req: Request, res: Response) => {
             const owner = res.locals.user.id;
             const { budgetId } = req.params;
-            const budget = await findSingleBudget({ _id: budgetId, userId: owner });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error("budget with this Id does not exist")
+                throw new Error("budget with this Id does not exist");
+            }
+
+            if (String(budget.userId) !== owner) {
+                throw new Error('unauthorized to access this resource');
             }
 
             res.status(StatusCodes.OK).json({ data: budget });
         }
 
     )
-    .patch(authenticateRequest, requireUser
+    .patch(authenticateRequest, requireUser,
+        async (req: Request, res: Response) => {
+            const { budgetId } = req.params;
+            const owner = res.locals.user.id;
 
-    )
-    .delete(authenticateRequest, requireUser
+            const findBudget = await findSingleBudget({ budgetId });
 
+            if (!findBudget) {
+                throw new Error('budget not found');
+            }
+
+            if (String(findBudget.userId) !== owner) {
+                throw new Error('unauthorized to update this resource');
+            }
+
+            const newBudget = await updateBudget({ budgetId }, { ...req.body }, { new: true, runValidators: true });
+
+            res.status(StatusCodes.OK).json({ msg: "budget updated successfully", budget: newBudget });
+        }
     )
+    .delete(authenticateRequest, requireUser,
+        async (req: Request, res: Response) => {
+            const { budgetId } = req.params;
+            const owner = res.locals.user.id;
+
+            const findBudget = await findSingleBudget({ budgetId });
+
+            if (!findBudget) {
+                throw new Error('budget not found');
+            }
+
+            if (String(findBudget.userId) !== owner) {
+                throw new Error('unauthorized to update this resource');
+            }
+
+            await deleteBudget({ budgetId });
+
+            res.status(StatusCodes.OK).json({ msg: "budget deleted successfully" });
+        }
+    );
 
 export {
     router as budgetRouter

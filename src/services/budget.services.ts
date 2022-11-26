@@ -1,4 +1,4 @@
-import { DocumentDefinition, FilterQuery } from "mongoose";
+import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
 import { CreateBudget } from "../interface/budget";
 import { BudgetModel } from "../models/budget.models";
 
@@ -7,13 +7,21 @@ export const createBudget = async (data: DocumentDefinition<Omit<CreateBudget, "
 };
 
 export const findSingleBudget = async (query: FilterQuery<CreateBudget>) => {
-    return BudgetModel.findById(query);
+    return BudgetModel.findOne(query);
 };
 
 export const getAllBudget = async (query: FilterQuery<CreateBudget>) => {
     return BudgetModel.find(query).populate('transactions');
 };
 
-export const updateBudget = async (data: DocumentDefinition<CreateBudget>) => {
+export const updateBudget = async (
+    query: FilterQuery<CreateBudget>,
+    update: UpdateQuery<CreateBudget>,
+    options: QueryOptions
+) => {
+    return BudgetModel.findOneAndUpdate(query, update, options)
+};
 
+export const deleteBudget = async (query: FilterQuery<CreateBudget>) => {
+    return BudgetModel.findOneAndDelete(query);
 };
