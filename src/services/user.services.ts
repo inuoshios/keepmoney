@@ -5,11 +5,7 @@ import { UserModel } from "../models/user.models";
 import { generateToken } from "../utils/jwt";
 
 export const createUser = async (data: DocumentDefinition<UserRegister>) => {
-    try {
-        return UserModel.create(data);
-    } catch (e) {
-        throw new Error((e as Error).message);
-    }
+    return UserModel.create(data);
 };
 
 export const loginUser = async (body: DocumentDefinition<UserLogin>) => {

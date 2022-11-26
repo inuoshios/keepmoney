@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import { ITransaction } from "../interface/transaction";
 
-const transactionSchema = new mongoose.Schema(
+export const transactionSchema = new mongoose.Schema(
     {
         title: {
             type: String,
@@ -20,7 +20,7 @@ const transactionSchema = new mongoose.Schema(
             required: true
         },
         owner: {
-            type: mongoose.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Budget",
             required: true
         }

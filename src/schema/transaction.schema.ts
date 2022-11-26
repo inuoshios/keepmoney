@@ -14,9 +14,7 @@ export const createTransactionSchema = z.object({
 
         type: z.enum(["Expenses", "Credit"]),
 
-        owner: z.string({
-            required_error: "owner cannnot be empty"
-        })
+        owner: z.string().optional()
     }),
     query: z.object({}),
 

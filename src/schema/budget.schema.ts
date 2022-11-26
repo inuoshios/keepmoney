@@ -22,9 +22,7 @@ export const createBudgetSchema = z.object({
             "December"
         ]),
 
-        userId: z.string({
-            required_error: "userId cannot be empty"
-        }),
+        userId: z.string().optional(),
 
     })
 });

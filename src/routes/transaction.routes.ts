@@ -9,17 +9,14 @@ import { createTransaction } from '../services/transaction.services';
 
 const router = express.Router();
 
-// this code looks bloated -> refractoring
 router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser, validate(createTransactionSchema),
     async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
         const { budgetId } = req.params;
+        const owner = res.locals.user
 
-        const budget = await findSingleBudget({ budgetId });
+        const budget = await findSingleBudget({ _id: budgetId, userId: owner });
         if (!budget) {
             throw new Error("budget not found");
-        }
-        if (!budget) {
-            res.status(StatusCodes.BAD_REQUEST).json({ msg: "budget does not exist" });
         }
 
         req.body.owner = budget._id;
@@ -35,6 +32,7 @@ router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser, 
                 break;
         }
 
+        budget.transactions.push({ ...transaction });
 
         res.status(StatusCodes.OK).json({ msg: "success", data: transaction });
     }

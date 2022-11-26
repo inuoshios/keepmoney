@@ -3,13 +3,13 @@ import { CreateBudget } from "../interface/budget";
 import { BudgetModel } from "../models/budget.models";
 
 export const createBudget = async (data: DocumentDefinition<Omit<CreateBudget, "transactions" | "_id">>) => {
-    try {
-        return BudgetModel.create(data);
-    } catch (e) {
-        throw new Error((e as Error).message);
-    }
+    return BudgetModel.create(data);
 };
 
 export const findSingleBudget = async (query: FilterQuery<CreateBudget>) => {
-    return await BudgetModel.findOne(query);
+    return BudgetModel.findById(query);
+};
+
+export const getAllBudget = async (query: FilterQuery<CreateBudget>) => {
+    return BudgetModel.find(query).populate('transactions');
 };

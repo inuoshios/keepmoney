@@ -1,5 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import { IBudget } from '../interface/budget';
+import { transactionSchema } from './transaction.models';
 
 const budgetSchema = new mongoose.Schema(
     {
@@ -29,7 +30,7 @@ const budgetSchema = new mongoose.Schema(
             required: true
         },
         userId: {
-            type: mongoose.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
@@ -37,6 +38,7 @@ const budgetSchema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Transaction'
         }]
+
     },
     {
         timestamps: true
