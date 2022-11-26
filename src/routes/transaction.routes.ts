@@ -23,16 +23,15 @@ router.post("/budget/:budgetId/transactions", authenticateRequest, requireUser, 
 
         const transaction = await createTransaction({ ...req.body });
 
-        switch (transaction.type) {
-            case "Expenses":
-                budget.amount = Number(budget.amount) - Number(transaction.amount);
-                break;
-            case "Credit":
-                budget.amount = Number(budget.amount) + Number(transaction.amount);
-                break;
+        if (transaction.type === "Credit") {
+            budget.amount = Number(budget.amount) + Number(transaction.amount);
+        } else if (transaction.type === "Expenses") {
+            budget.amount = Number(budget.amount) - Number(transaction.amount);
         }
 
-        budget.transactions.push({ ...transaction });
+        budget.transactions.push(transaction);
+
+        budget.save();
 
         res.status(StatusCodes.OK).json({ msg: "success", data: transaction });
     }
