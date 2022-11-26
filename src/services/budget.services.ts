@@ -13,3 +13,7 @@ export const findSingleBudget = async (query: FilterQuery<CreateBudget>) => {
 export const getAllBudget = async (query: FilterQuery<CreateBudget>) => {
     return BudgetModel.find(query).populate('transactions');
 };
+
+export const updateBudget = async () => {
+
+};

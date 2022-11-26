@@ -4,7 +4,7 @@ import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
 import { createBudgetInput, createBudgetSchema } from '../schema/budget.schema';
-import { createBudget, getAllBudget } from '../services/budget.services';
+import { createBudget, findSingleBudget, getAllBudget } from '../services/budget.services';
 
 const router = express.Router();
 
@@ -24,6 +24,27 @@ router.route("/budget")
             res.status(StatusCodes.OK).json({ msg: "success", data: budget });
         }
     );
+
+router.route("/budget/:budgetId")
+    .get(authenticateRequest, requireUser,
+        async (req: Request, res: Response) => {
+            const owner = res.locals.user.id;
+            const { budgetId } = req.params;
+            const budget = await findSingleBudget({ _id: budgetId, userId: owner });
+            if (!budget) {
+                throw new Error("budget with this Id does not exist")
+            }
+
+            res.status(StatusCodes.OK).json({ data: budget });
+        }
+
+    )
+    .patch(authenticateRequest, requireUser
+
+    )
+    .delete(authenticateRequest, requireUser
+
+    )
 
 export {
     router as budgetRouter
