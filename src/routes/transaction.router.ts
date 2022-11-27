@@ -26,14 +26,14 @@ router.route("/budget/:budgetId/transactions")
         async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
             const { budgetId } = req.params;
             // @ts-ignore
-            const { owner } = req.user;
+            const { id } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
                 throw new Error("budget not found");
             }
 
-            if (String(budget.userId) !== owner) {
+            if (budget.userId !== id) {
                 throw new Error('unauthenticated');
             }
 
@@ -58,14 +58,14 @@ router.route("/budget/:budgetId/transactions")
         async (req: Request<getTransactionsParams['params']>, res: Response) => {
             const { budgetId } = req.params;
             // @ts-ignore
-            const { user } = req.user;
+            const { id } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
                 throw new Error("budget not found");
             }
 
-            if (String(budget.userId) !== user) {
+            if (budget.userId !== id) {
                 throw new Error('unauthenticated');
             }
 
@@ -80,14 +80,14 @@ router.route("/budget/:budgetId/transactions/:transactionId")
         async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
             // @ts-ignore
-            const { isUser } = req.user;
+            const { id } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
 
-            if (String(budget.userId) !== isUser) {
+            if (budget.userId !== id) {
                 throw new Error('you are not authenticated to access this resource');
             }
 
@@ -103,14 +103,14 @@ router.route("/budget/:budgetId/transactions/:transactionId")
         async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
             // @ts-ignore
-            const { isUser } = req.user;
+            const { id } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
 
-            if (String(budget.userId) !== isUser) {
+            if (budget.userId !== id) {
                 throw new Error('you are not authenticated to access this resource');
             }
 
@@ -133,14 +133,14 @@ router.route("/budget/:budgetId/transactions/:transactionId")
         async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
             // @ts-ignore
-            const { isUser } = req.user;
+            const { id } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
 
-            if (String(budget.userId) !== isUser) {
+            if (budget.userId !== id) {
                 throw new Error('you are not authenticated to access this resource');
             }
 

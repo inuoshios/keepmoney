@@ -21,8 +21,7 @@ export const transactionSchema = new Schema(
         },
         owner: {
             type: Schema.Types.ObjectId,
-            ref: "Budget",
-            required: true
+            ref: "Budget"
         }
     },
     {

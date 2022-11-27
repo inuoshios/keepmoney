@@ -27,12 +27,12 @@ router.route("/budget")
         async (req: Request<{}, {}, createBudgetInput['body']>, res: Response) => {
             // @ts-ignore
             req.body.userId = req.user.id;
-            const budget = await createBudget(req.body);
+            const budget = await createBudget({ ...req.body });
             res.status(StatusCodes.CREATED).json({ msg: "success", data: budget });
         }
     )
     .get(requireUser,
-        async (_: Request, res: Response) => {
+        async (req: Request, res: Response) => {
             // @ts-ignore
             const { id } = req.user;
             const budget = await getAllBudget({ userId: id });
@@ -45,14 +45,14 @@ router.route("/budget/:budgetId")
     .get(requireUser, validate(getSingleBudgetSchema),
         async (req: Request<getSingleBudgetParams['params']>, res: Response) => {
             // @ts-ignore
-            const { owner } = req.user;
+            const { id } = req.user;
             const { budgetId } = req.params;
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error("budget with this Id does not exist");
             }
 
-            if (String(budget.userId) !== owner) {
+            if (String(budget.userId) !== id) {
                 throw new Error('unauthorized to access this resource');
             }
 
@@ -64,7 +64,7 @@ router.route("/budget/:budgetId")
         async (req: Request<updateBudgetParams['params'], {}, updateBudgetParams['body']>, res: Response) => {
             const { budgetId } = req.params;
             // @ts-ignore
-            const { owner } = req.user;
+            const { id } = req.user;
 
             const findBudget = await findSingleBudget({ budgetId });
 
@@ -72,7 +72,7 @@ router.route("/budget/:budgetId")
                 throw new Error('budget not found');
             }
 
-            if (String(findBudget.userId) !== owner) {
+            if (String(findBudget.userId) !== id) {
                 throw new Error('unauthorized to update this resource');
             }
 
@@ -85,7 +85,7 @@ router.route("/budget/:budgetId")
         async (req: Request<deleteBudgetParams['params']>, res: Response) => {
             const { budgetId } = req.params;
             // @ts-ignore
-            const { owner } = req.user;
+            const { id } = req.user;
 
             const findBudget = await findSingleBudget({ budgetId });
 
@@ -93,7 +93,7 @@ router.route("/budget/:budgetId")
                 throw new Error('budget not found');
             }
 
-            if (String(findBudget.userId) !== owner) {
+            if (String(findBudget.userId) !== id) {
                 throw new Error('unauthorized to update this resource');
             }
 
