@@ -1,4 +1,9 @@
-import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
+import {
+    DocumentDefinition,
+    FilterQuery,
+    QueryOptions,
+    UpdateQuery
+} from "mongoose";
 import { CreateTransaction } from "../interface/transaction";
 import { TransactionModel } from "../models/transaction.models";
 

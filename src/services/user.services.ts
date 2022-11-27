@@ -1,4 +1,4 @@
-import { DocumentDefinition } from "mongoose";
+import { DocumentDefinition, FilterQuery } from "mongoose";
 import config from "../config";
 import { UserLogin, UserRegister } from "../interface/user";
 import { UserModel } from "../models/user.models";
@@ -26,4 +26,12 @@ export const loginUser = async (body: DocumentDefinition<UserLogin>) => {
     const refreshToken = generateToken({ id: user._id, email: body.email }, { expiresIn: config.refreshTokenExpiry });
 
     return { user, accessToken, refreshToken };
+};
+
+export const logoutUser = async () => {
+
+};
+
+export const getSingleUser = async (query: FilterQuery<UserRegister>) => {
+    return UserModel.findOne(query)
 };

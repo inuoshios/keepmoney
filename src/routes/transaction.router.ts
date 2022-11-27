@@ -1,11 +1,14 @@
 import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
 import {
     CreateTransactionInput,
-    createTransactionSchema
+    createTransactionSchema,
+    getSingleTransactionParams,
+    getSingleTransactionSchema,
+    getTransactionsParams,
+    getTransactionsSchema
 } from '../schema/transaction.schema';
 import { findSingleBudget } from '../services/budget.services';
 import {
@@ -19,10 +22,11 @@ import {
 const router = express.Router();
 
 router.route("/budget/:budgetId/transactions")
-    .post(authenticateRequest, requireUser, validate(createTransactionSchema),
+    .post(requireUser, validate(createTransactionSchema),
         async (req: Request<CreateTransactionInput['params'], {}, CreateTransactionInput['body']>, res: Response) => {
             const { budgetId } = req.params;
-            const owner = res.locals.user.id;
+            // @ts-ignore
+            const { owner } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
@@ -50,10 +54,11 @@ router.route("/budget/:budgetId/transactions")
             res.status(StatusCodes.OK).json({ msg: "success", data: transaction });
         }
     ).
-    get(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    get(requireUser, validate(getTransactionsSchema),
+        async (req: Request<getTransactionsParams['params']>, res: Response) => {
             const { budgetId } = req.params;
-            const user = res.locals.user.id;
+            // @ts-ignore
+            const { user } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
@@ -71,10 +76,11 @@ router.route("/budget/:budgetId/transactions")
     );
 
 router.route("/budget/:budgetId/transactions/:transactionId")
-    .get(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    .get(requireUser, validate(getSingleTransactionSchema),
+        async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
-            const isUser = res.locals.user.id;
+            // @ts-ignore
+            const { isUser } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
@@ -93,10 +99,11 @@ router.route("/budget/:budgetId/transactions/:transactionId")
             res.status(StatusCodes.OK).json({ msg: "success", transaction });
         }
     )
-    .patch(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    .patch(requireUser, validate(getSingleTransactionSchema),
+        async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
-            const isUser = res.locals.user.id;
+            // @ts-ignore
+            const { isUser } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {
@@ -122,10 +129,11 @@ router.route("/budget/:budgetId/transactions/:transactionId")
 
         }
     )
-    .delete(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    .delete(requireUser, validate(getSingleTransactionSchema),
+        async (req: Request<getSingleTransactionParams['params']>, res: Response) => {
             const { budgetId, transactionId } = req.params;
-            const isUser = res.locals.user.id;
+            // @ts-ignore
+            const { isUser } = req.user;
 
             const budget = await findSingleBudget({ budgetId });
             if (!budget) {

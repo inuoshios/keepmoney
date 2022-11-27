@@ -1,24 +1,40 @@
 import express, { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
-import { createBudgetInput, createBudgetSchema } from '../schema/budget.schema';
-import { createBudget, deleteBudget, findSingleBudget, getAllBudget, updateBudget } from '../services/budget.services';
+import {
+    createBudgetInput,
+    createBudgetSchema,
+    deleteBudgetParams,
+    deleteBudgetSchema,
+    getSingleBudgetParams,
+    getSingleBudgetSchema,
+    updateBudgetParams,
+    updateBudgetSchema
+} from '../schema/budget.schema';
+import {
+    createBudget,
+    deleteBudget,
+    findSingleBudget,
+    getAllBudget,
+    updateBudget
+} from '../services/budget.services';
 
 const router = express.Router();
 
 router.route("/budget")
-    .post(authenticateRequest, requireUser, validate(createBudgetSchema),
+    .post(requireUser, validate(createBudgetSchema),
         async (req: Request<{}, {}, createBudgetInput['body']>, res: Response) => {
-            req.body.userId = res.locals.user.id;
+            // @ts-ignore
+            req.body.userId = req.user.id;
             const budget = await createBudget(req.body);
             res.status(StatusCodes.CREATED).json({ msg: "success", data: budget });
         }
     )
-    .get(authenticateRequest, requireUser,
+    .get(requireUser,
         async (_: Request, res: Response) => {
-            const id = res.locals.user.id;
+            // @ts-ignore
+            const { id } = req.user;
             const budget = await getAllBudget({ userId: id });
 
             res.status(StatusCodes.OK).json({ msg: "success", data: budget });
@@ -26,9 +42,10 @@ router.route("/budget")
     );
 
 router.route("/budget/:budgetId")
-    .get(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
-            const owner = res.locals.user.id;
+    .get(requireUser, validate(getSingleBudgetSchema),
+        async (req: Request<getSingleBudgetParams['params']>, res: Response) => {
+            // @ts-ignore
+            const { owner } = req.user;
             const { budgetId } = req.params;
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
@@ -43,10 +60,11 @@ router.route("/budget/:budgetId")
         }
 
     )
-    .patch(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    .patch(requireUser, validate(updateBudgetSchema),
+        async (req: Request<updateBudgetParams['params'], {}, updateBudgetParams['body']>, res: Response) => {
             const { budgetId } = req.params;
-            const owner = res.locals.user.id;
+            // @ts-ignore
+            const { owner } = req.user;
 
             const findBudget = await findSingleBudget({ budgetId });
 
@@ -63,10 +81,11 @@ router.route("/budget/:budgetId")
             res.status(StatusCodes.OK).json({ msg: "budget updated successfully", budget: newBudget });
         }
     )
-    .delete(authenticateRequest, requireUser,
-        async (req: Request, res: Response) => {
+    .delete(requireUser, validate(deleteBudgetSchema),
+        async (req: Request<deleteBudgetParams['params']>, res: Response) => {
             const { budgetId } = req.params;
-            const owner = res.locals.user.id;
+            // @ts-ignore
+            const { owner } = req.user;
 
             const findBudget = await findSingleBudget({ budgetId });
 

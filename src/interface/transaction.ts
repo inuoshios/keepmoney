@@ -3,9 +3,8 @@ export interface ITransaction {
     title: string;
     description: string;
     amount: number;
-    type:
-    | "Expenses"
-    | "Credit";
+    type: Type;
+
     owner: string;
 }
 
@@ -13,7 +12,7 @@ export interface CreateTransaction {
     title: string;
     description?: string;
     amount: number;
-    type:
-    | "Expenses"
-    | "Credit";
+    type: Type;
 }
+
+type Type = "Expenses" | "Credit";

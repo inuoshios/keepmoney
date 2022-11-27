@@ -2,19 +2,7 @@ export interface IBudget {
     _id: string;
     description: string;
     amount: number;
-    month:
-    | "January"
-    | "February"
-    | "March"
-    | "April"
-    | "May"
-    | "June"
-    | "July"
-    | "August"
-    | "September"
-    | "October"
-    | "November"
-    | "December";
+    month: Month;
     userId: string;
     transactions: object[];
 }
@@ -23,8 +11,12 @@ export interface CreateBudget {
     _id: string;
     description?: string;
     amount: number;
-    month:
-    | "January"
+    month: Month;
+
+    transactions?: object[];
+}
+
+type Month = "January"
     | "February"
     | "March"
     | "April"
@@ -36,5 +28,3 @@ export interface CreateBudget {
     | "October"
     | "November"
     | "December";
-    transactions?: object[];
-}

@@ -1,8 +1,13 @@
-import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
+import {
+    DocumentDefinition,
+    FilterQuery,
+    QueryOptions,
+    UpdateQuery
+} from "mongoose";
 import { CreateBudget } from "../interface/budget";
 import { BudgetModel } from "../models/budget.models";
 
-export const createBudget = async (data: DocumentDefinition<Omit<CreateBudget, "transactions" | "_id">>) => {
+export const createBudget = async (data: DocumentDefinition<Omit<CreateBudget, "_id">>) => {
     return BudgetModel.create(data);
 };
 

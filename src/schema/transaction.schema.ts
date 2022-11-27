@@ -20,9 +20,30 @@ export const createTransactionSchema = z.object({
 
     params: z.object({
         budgetId: z.string({
-            required_error: "budget it cannot be empty"
+            required_error: "budget id cannot be empty"
         })
     }),
 });
 
+export const getTransactionsSchema = z.object({
+    params: z.object({
+        budgetId: z.string({
+            required_error: "budget id cannot be empty"
+        })
+    })
+});
+
+export const getSingleTransactionSchema = z.object({
+    params: z.object({
+        budgetId: z.string({
+            required_error: "budget id cannot be empty"
+        }),
+        transactionId: z.string({
+            required_error: "transaction id cannot be empty"
+        })
+    })
+});
+
 export type CreateTransactionInput = z.TypeOf<typeof createTransactionSchema>;
+export type getTransactionsParams = z.TypeOf<typeof getTransactionsSchema>;
+export type getSingleTransactionParams = z.TypeOf<typeof getSingleTransactionSchema>;
