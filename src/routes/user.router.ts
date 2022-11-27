@@ -73,12 +73,18 @@ router.post('/signin', validate(createLoginSchema),
     }
 );
 
-router.post('refresh-token', async (req: Request, res: Response) => {
+router.delete('/signout', async (req: Request, res: Response) => {
+    res.cookie('accessToken', "", {
+        maxAge: 0,
+        httpOnly: true
+    });
 
-});
+    res.cookie('refreshToken', "", {
+        maxAge: 0,
+        httpOnly: true
+    });
 
-router.delete('/logout', async (req: Request, res: Response) => {
-
+    res.status(StatusCodes.OK).json({ msg: "user logged out successfully" });
 });
 
 export {
