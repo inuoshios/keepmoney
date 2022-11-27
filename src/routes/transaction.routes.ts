@@ -3,9 +3,18 @@ import { StatusCodes } from 'http-status-codes';
 import { authenticateRequest } from '../middleware/authentication';
 import { requireUser } from '../middleware/requireUser';
 import { validate } from '../middleware/validateResource';
-import { CreateTransactionInput, createTransactionSchema } from '../schema/transaction.schema';
+import {
+    CreateTransactionInput,
+    createTransactionSchema
+} from '../schema/transaction.schema';
 import { findSingleBudget } from '../services/budget.services';
-import { createTransaction, getTransactions } from '../services/transaction.services';
+import {
+    createTransaction,
+    deleteSingleTransaction,
+    getSingleTransaction,
+    getTransactions,
+    updateSingleTransaction
+} from '../services/transaction.services';
 
 const router = express.Router();
 
@@ -63,13 +72,79 @@ router.route("/budget/:budgetId/transactions")
 
 router.route("/budget/:budgetId/transactions/:transactionId")
     .get(authenticateRequest, requireUser,
-        async => { }
+        async (req: Request, res: Response) => {
+            const { budgetId, transactionId } = req.params;
+            const isUser = res.locals.user.id;
+
+            const budget = await findSingleBudget({ budgetId });
+            if (!budget) {
+                throw new Error('budget with this id does not exist');
+            }
+
+            if (String(budget.userId) !== isUser) {
+                throw new Error('you are not authenticated to access this resource');
+            }
+
+            const transaction = await getSingleTransaction({ transactionId });
+            if (!transaction) {
+                throw new Error('transaction does not exist')
+            }
+
+            res.status(StatusCodes.OK).json({ msg: "success", transaction });
+        }
     )
     .patch(authenticateRequest, requireUser,
-        async => { }
+        async (req: Request, res: Response) => {
+            const { budgetId, transactionId } = req.params;
+            const isUser = res.locals.user.id;
+
+            const budget = await findSingleBudget({ budgetId });
+            if (!budget) {
+                throw new Error('budget with this id does not exist');
+            }
+
+            if (String(budget.userId) !== isUser) {
+                throw new Error('you are not authenticated to access this resource');
+            }
+
+            const trnx = await getSingleTransaction({ transactionId });
+            if (!trnx) {
+                throw new Error('transaction does not exist');
+            }
+
+            const updateTrnx = await updateSingleTransaction(
+                { _id: trnx._id },
+                { ...req.body },
+                { new: true, runValidators: true }
+            );
+
+            res.status(StatusCodes.OK).json({ msg: "success", transaction: updateTrnx });
+
+        }
     )
     .delete(authenticateRequest, requireUser,
-        async => { }
+        async (req: Request, res: Response) => {
+            const { budgetId, transactionId } = req.params;
+            const isUser = res.locals.user.id;
+
+            const budget = await findSingleBudget({ budgetId });
+            if (!budget) {
+                throw new Error('budget with this id does not exist');
+            }
+
+            if (String(budget.userId) !== isUser) {
+                throw new Error('you are not authenticated to access this resource');
+            }
+
+            const trnx = await getSingleTransaction({ transactionId });
+            if (!trnx) {
+                throw new Error('transaction does not exist');
+            }
+
+            await deleteSingleTransaction({ _id: trnx._id });
+
+            res.status(StatusCodes.OK).json({ msg: "transaction deleted successfully" });
+        }
     )
 
 
