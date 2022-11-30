@@ -2,6 +2,7 @@ import { DocumentDefinition, FilterQuery } from "mongoose";
 import config from "../config";
 import { UserLogin, UserRegister } from "../interface/user";
 import { UserModel } from "../models/user.models";
+import { BadRequestError, NotFoundError } from "../utils/errors";
 import { generateToken } from "../utils/jwt";
 
 export const createUser = async (data: DocumentDefinition<UserRegister>) => {
@@ -13,12 +14,12 @@ export const loginUser = async (body: DocumentDefinition<UserLogin>) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-        throw new Error('user does not exist');
+        throw new NotFoundError("user does not exist");
     }
 
     const isValid = await user.comparePassword(body.password);
     if (!isValid) {
-        throw new Error('password does not match')
+        throw new BadRequestError('password does not match');
     }
 
     const accessToken = generateToken({ id: user._id, email: body.email }, { expiresIn: config.accessTokenExpiry });

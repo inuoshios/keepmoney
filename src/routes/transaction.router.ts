@@ -18,6 +18,7 @@ import {
     getTransactions,
     updateSingleTransaction
 } from '../services/transaction.services';
+import { NotFoundError, UnauthorizedError } from '../utils/errors';
 
 const router = express.Router();
 
@@ -30,11 +31,11 @@ router.route("/budget/:budgetId/transactions")
 
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error("budget not found");
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (budget.userId !== id) {
-                throw new Error('unauthenticated');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             req.body.owner = budget._id;
@@ -62,11 +63,11 @@ router.route("/budget/:budgetId/transactions")
 
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error("budget not found");
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (budget.userId !== id) {
-                throw new Error('unauthenticated');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             const transaction = await getTransactions({ owner: budget._id })
@@ -84,16 +85,16 @@ router.route("/budget/:budgetId/transactions/:transactionId")
 
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error('budget with this id does not exist');
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (budget.userId !== id) {
-                throw new Error('you are not authenticated to access this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             const transaction = await getSingleTransaction({ _id: transactionId });
             if (!transaction) {
-                throw new Error('transaction does not exist')
+                throw new NotFoundError("transaction with this id does not exist");
             }
 
             res.status(StatusCodes.OK).json({ msg: "success", transaction });
@@ -107,16 +108,16 @@ router.route("/budget/:budgetId/transactions/:transactionId")
 
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error('budget with this id does not exist');
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (budget.userId !== id) {
-                throw new Error('you are not authenticated to access this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             const trnx = await getSingleTransaction({ _id: transactionId });
             if (!trnx) {
-                throw new Error('transaction does not exist');
+                throw new NotFoundError("transaction with this id does not exist");
             }
 
             const updateTrnx = await updateSingleTransaction(
@@ -137,16 +138,16 @@ router.route("/budget/:budgetId/transactions/:transactionId")
 
             const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                throw new Error('budget with this id does not exist');
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (budget.userId !== id) {
-                throw new Error('you are not authenticated to access this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             const trnx = await getSingleTransaction({ _id: transactionId });
             if (!trnx) {
-                throw new Error('transaction does not exist');
+                throw new NotFoundError("transaction with this id does not exist");
             }
 
             await deleteSingleTransaction({ _id: trnx._id });

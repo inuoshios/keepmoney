@@ -19,7 +19,7 @@ import {
     getAllBudget,
     updateBudget
 } from '../services/budget.services';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, UnauthorizedError } from '../utils/errors';
 
 const router = express.Router();
 
@@ -54,7 +54,7 @@ router.route("/budget/:budgetId")
             }
 
             if (budget.userId !== id) {
-                throw new Error('unauthorized to access this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             res.status(StatusCodes.OK).json({ data: budget });
@@ -70,12 +70,11 @@ router.route("/budget/:budgetId")
             const findBudget = await findSingleBudget({ _id: budgetId });
 
             if (!findBudget) {
-                // throw new Error('budget not found');
                 throw new NotFoundError("buget with this id does not exist");
             }
 
             if (findBudget.userId !== id) {
-                throw new Error('unauthorized to update this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             const newBudget = await updateBudget({ budgetId }, { ...req.body }, { new: true, runValidators: true });
@@ -92,11 +91,11 @@ router.route("/budget/:budgetId")
             const findBudget = await findSingleBudget({ budgetId });
 
             if (!findBudget) {
-                throw new Error('budget not found');
+                throw new NotFoundError("buget with this id does not exist");
             }
 
             if (findBudget.userId !== id) {
-                throw new Error('unauthorized to update this resource');
+                throw new UnauthorizedError("you're unauthorized to access this resource");
             }
 
             await deleteBudget({ budgetId });
