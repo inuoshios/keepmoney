@@ -7,6 +7,7 @@ import { userRouter } from './routes/user.router';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { authenticateRequest } from './middleware/authentication';
+import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use('/api', [userRouter]);
 app.use(authenticateRequest)
 
 app.use('/api', [budgetRouter, transactionRouter]);
+
+app.use(errorHandlerMiddleware);
 
 app.use(notFound);
 

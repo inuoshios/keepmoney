@@ -50,7 +50,6 @@ router.route("/budget/:budgetId")
             const { budgetId } = req.params;
             const budget: any = await findSingleBudget({ _id: budgetId });
             if (!budget) {
-                // throw new Error("budget with this Id does not exist");
                 throw new NotFoundError("buget with this id does not exist");
             }
 
