@@ -28,7 +28,7 @@ router.route("/budget/:budgetId/transactions")
             // @ts-ignore
             const { id } = req.user;
 
-            const budget = await findSingleBudget({ budgetId });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error("budget not found");
             }
@@ -60,7 +60,7 @@ router.route("/budget/:budgetId/transactions")
             // @ts-ignore
             const { id } = req.user;
 
-            const budget = await findSingleBudget({ budgetId });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error("budget not found");
             }
@@ -82,7 +82,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
             // @ts-ignore
             const { id } = req.user;
 
-            const budget = await findSingleBudget({ budgetId });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
@@ -91,7 +91,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
                 throw new Error('you are not authenticated to access this resource');
             }
 
-            const transaction = await getSingleTransaction({ transactionId });
+            const transaction = await getSingleTransaction({ _id: transactionId });
             if (!transaction) {
                 throw new Error('transaction does not exist')
             }
@@ -105,7 +105,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
             // @ts-ignore
             const { id } = req.user;
 
-            const budget = await findSingleBudget({ budgetId });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
@@ -114,7 +114,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
                 throw new Error('you are not authenticated to access this resource');
             }
 
-            const trnx = await getSingleTransaction({ transactionId });
+            const trnx = await getSingleTransaction({ _id: transactionId });
             if (!trnx) {
                 throw new Error('transaction does not exist');
             }
@@ -135,7 +135,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
             // @ts-ignore
             const { id } = req.user;
 
-            const budget = await findSingleBudget({ budgetId });
+            const budget = await findSingleBudget({ _id: budgetId });
             if (!budget) {
                 throw new Error('budget with this id does not exist');
             }
@@ -144,7 +144,7 @@ router.route("/budget/:budgetId/transactions/:transactionId")
                 throw new Error('you are not authenticated to access this resource');
             }
 
-            const trnx = await getSingleTransaction({ transactionId });
+            const trnx = await getSingleTransaction({ _id: transactionId });
             if (!trnx) {
                 throw new Error('transaction does not exist');
             }
