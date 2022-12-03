@@ -1,43 +1,48 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import { renewAccessToken } from '../services/token.services';
-import { verifyToken } from '../utils/jwt';
+import config from '../config';
+import { getSingleUser } from '../services/user.services';
+import { NotFoundError, UnauthorizedError } from '../utils/errors';
+import { generateToken, verifyToken } from '../utils/jwt';
 
 // authenticateRequest is a middleware which is called when request are being made to specific routes
 export const authenticateRequest = async (req: Request, res: Response, next: NextFunction) => {
     const { accessToken, refreshToken }: { accessToken: string, refreshToken: string } = req.cookies;
 
     if (!accessToken) {
-        throw new Error('unauthorized to access this resource');
+        throw new UnauthorizedError('unauthorized to access this resource');
     }
 
-    try {
-        const payload = verifyToken(accessToken) as JwtPayload;
+    const { payload, expired } = verifyToken(accessToken);
+
+    if (payload) {
         // @ts-ignore
-        req.user = payload.id;
-
-        // check if the payload is expired and if there is a refreshToken
-        if (payload.exp && refreshToken) {
-            const newAccessToken = await renewAccessToken({ refreshToken });
-
-            // store the new accessToken in the cookie
-            res.cookie("accessToken", newAccessToken, {
-                maxAge: 900000,
-                httpOnly: true
-            });
-
-            // the verifyToken function is used to verify if the new accessToken is valid or not
-            const newPayload = verifyToken(newAccessToken) as JwtPayload;
-
-            // @ts-ignore
-            req.user = newPayload.id;
-
-            return next();
-        }
-
-        next();
-    } catch (e) {
-        throw new Error((e as Error).message);
+        req.user = (payload as JwtPayload).id;
+        return next();
     }
 
+    const { payload: refresh } = expired && refreshToken ? verifyToken(refreshToken) : { payload: null };
+
+    if (!refresh) {
+        throw new UnauthorizedError('refresh token not valid');
+    }
+
+    // @ts-ignore
+    const user = await getSingleUser({ _id: refresh.id });
+
+    if (!user) {
+        throw new NotFoundError('user with this id not found');
+    }
+
+    const newAccessToken = generateToken(
+        { id: user._id, email: user.email },
+        { expiresIn: config.accessTokenExpiry }
+    );
+
+    const newPayload = verifyToken(newAccessToken).payload;
+
+    // @ts-ignore
+    req.user = (newPayload as JwtPayload).id;
+
+    next();
 }

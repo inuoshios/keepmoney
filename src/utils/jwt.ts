@@ -9,5 +9,10 @@ export const generateToken = (data: object, options: jwt.SignOptions | undefined
 };
 
 export const verifyToken = (token: string) => {
-    return jwt.verify(token, config.jwtSecret, { algorithms: ["RS256"] });
+    try {
+        const decoded = jwt.verify(token, config.jwtSecret, { algorithms: ["RS256"] });
+        return { payload: decoded, expired: false };
+    } catch (e) {
+        return { payload: null, expired: (e as Error).message.includes("jwt expired") };
+    }
 };
