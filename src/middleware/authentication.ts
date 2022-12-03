@@ -1,9 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import config from '../config';
 import { renewAccessToken } from '../services/token.services';
-import { getSingleUser } from '../services/user.services';
-import { generateToken, verifyToken } from '../utils/jwt';
+import { verifyToken } from '../utils/jwt';
 
 // authenticateRequest is a middleware which is called when request are being made to specific routes
 export const authenticateRequest = async (req: Request, res: Response, next: NextFunction) => {

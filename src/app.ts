@@ -1,13 +1,13 @@
-import 'express-async-errors';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express, { Request, Response } from 'express';
+import 'express-async-errors';
+import { authenticateRequest } from './middleware/authentication';
+import { errorHandlerMiddleware } from './middleware/errorHandler';
 import { notFound } from './middleware/notFound';
 import { budgetRouter } from './routes/budget.router';
 import { transactionRouter } from './routes/transaction.router';
 import { userRouter } from './routes/user.router';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import { authenticateRequest } from './middleware/authentication';
-import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 const app = express();
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import { createUser, loginUser } from '../services/user.services';
 import { StatusCodes } from 'http-status-codes';
+import config from '../config';
 import { validate } from '../middleware/validateResource';
 import {
     CreateLoginInput,
@@ -8,8 +8,8 @@ import {
     CreateUserInput,
     createUserSchema
 } from '../schema/user.schema';
+import { createUser, loginUser } from '../services/user.services';
 import { generateToken } from '../utils/jwt';
-import config from '../config';
 
 const router = express.Router();
 
