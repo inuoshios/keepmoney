@@ -12,29 +12,33 @@ import { z } from 'zod';
  * }
  */
 export const createUserSchema = z.object({
-    body: z.object({
-        firstName: z.string({
-            required_error: "first name is required"
-        })
-            .min(2, "first name must be greater than 2 characters")
-            .max(100, "first name is cannot exceed 100 characters"),
+  body: z.object({
+    firstName: z
+      .string({
+        required_error: 'first name is required',
+      })
+      .min(2, 'first name must be greater than 2 characters')
+      .max(100, 'first name is cannot exceed 100 characters'),
 
-        lastName: z.string({
-            required_error: "last name is required"
-        })
-            .min(2, "last name must be greater than 2 characters")
-            .max(100, "last name is cannot exceed 100 characters"),
+    lastName: z
+      .string({
+        required_error: 'last name is required',
+      })
+      .min(2, 'last name must be greater than 2 characters')
+      .max(100, 'last name is cannot exceed 100 characters'),
 
-        email: z.string({
-            required_error: "email is required"
-        })
-            .email("not a valid email address"),
+    email: z
+      .string({
+        required_error: 'email is required',
+      })
+      .email('not a valid email address'),
 
-        password: z.string({
-            required_error: "please enter a password"
-        })
-            .min(6, "password is too short; password must be 6 characters or more"),
-    })
+    password: z
+      .string({
+        required_error: 'please enter a password',
+      })
+      .min(6, 'password is too short; password must be 6 characters or more'),
+  }),
 });
 
 /**
@@ -45,15 +49,15 @@ export const createUserSchema = z.object({
  * }
  */
 export const createLoginSchema = z.object({
-    body: z.object({
-        email: z.string({
-            required_error: "email cannot be empty"
-        }),
-
-        password: z.string({
-            required_error: "password cannot be empty"
-        })
+  body: z.object({
+    email: z.string({
+      required_error: 'email cannot be empty',
     }),
+
+    password: z.string({
+      required_error: 'password cannot be empty',
+    }),
+  }),
 });
 
 export type CreateLoginInput = z.TypeOf<typeof createLoginSchema>;

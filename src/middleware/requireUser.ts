@@ -1,11 +1,15 @@
-import { Request, Response, NextFunction } from "express";
-import { StatusCodes } from "http-status-codes";
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
-export const requireUser = (req: Request, res: Response, next: NextFunction) => {
-    // @ts-ignore
-    if (!req.user) {
-        return res.sendStatus(StatusCodes.FORBIDDEN);
-    }
+export const requireUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // @ts-ignore
+  if (!req.user) {
+    return res.sendStatus(StatusCodes.FORBIDDEN);
+  }
 
-    return next();
+  return next();
 };
